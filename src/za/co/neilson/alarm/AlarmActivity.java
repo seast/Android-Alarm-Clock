@@ -77,10 +77,8 @@ public class AlarmActivity extends ListActivity implements
 					public boolean onItemLongClick(AdapterView<?> adapterView,
 							View view, int position, long id) {
 						view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-						final Alarm alarm = (Alarm) alarmListAdapter
-								.getItem(position);
-						Builder dialog = new AlertDialog.Builder(
-								AlarmActivity.this);
+						final Alarm alarm = (Alarm) alarmListAdapter.getItem(position);
+						Builder dialog = new AlertDialog.Builder(AlarmActivity.this);						
 						dialog.setTitle("Delete");
 						dialog.setMessage("Delete this alarm?");
 						dialog.setPositiveButton("Ok", new OnClickListener() {
@@ -99,8 +97,16 @@ public class AlarmActivity extends ListActivity implements
 										.callMathAlarmScheduleService();
 							}
 						});
+						dialog.setNegativeButton("Cancel", new OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						});
+						
 						dialog.show();
-						alarmListAdapter.getItem(position);
+						
 						return true;
 					}
 				});

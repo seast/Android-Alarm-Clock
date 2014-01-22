@@ -3,6 +3,7 @@ package za.co.neilson.alarm.preferences;
 import java.util.Calendar;
 
 import za.co.neilson.alarm.Alarm;
+import za.co.neilson.alarm.AlarmActivity;
 import za.co.neilson.alarm.database.Database;
 import za.co.neilson.alarm.preferences.AlarmPreference.Key;
 import za.co.neilson.alarm.service.AlarmServiceBroadcastReciever;
@@ -10,6 +11,7 @@ import za.co.neilson.alarm.R;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.TimePickerDialog;
+import android.app.AlertDialog.Builder;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -42,7 +44,7 @@ import android.widget.Toast;
 
 public class AlarmPreferencesActivity extends ListActivity {
 
-	ImageButton saveButton;
+	ImageButton deleteButton;
 	TextView okButton;
 	TextView cancelButton;
 	private Alarm alarm;
@@ -54,40 +56,55 @@ public class AlarmPreferencesActivity extends ListActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.alarm_preferences);
 
-		saveButton = (ImageButton) findViewById(R.id.toolbar).findViewById(
-				R.id.button_save);
-		saveButton.setOnTouchListener(new OnTouchListener() {
+		deleteButton = (ImageButton) findViewById(R.id.toolbar).findViewById(R.id.button_delete);
+		deleteButton.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				
+
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					saveButton.setBackgroundColor(getResources().getColor(
-							R.color.holo_blue_light));
+					deleteButton.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
 					break;
 				case MotionEvent.ACTION_UP:
 					v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-					Database.init(getApplicationContext());
-					if (getMathAlarm().getId() < 1) {
-						Database.create(getMathAlarm());
-					} else {
-						Database.update(getMathAlarm());
-					}
-					callMathAlarmScheduleService();
-					Toast.makeText(AlarmPreferencesActivity.this,
-							getMathAlarm().getTimeUntilNextAlarmMessage(),
-							Toast.LENGTH_LONG).show();
-					finish();
+					
+					
+					Builder dialog = new AlertDialog.Builder(AlarmPreferencesActivity.this);
+					dialog.setTitle("Delete");
+					dialog.setMessage("Delete this alarm?");
+					dialog.setPositiveButton("Ok", new OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+							Database.init(getApplicationContext());
+							if (getMathAlarm().getId() < 1) {
+								//Alarm not saved
+							} else {
+								Database.deleteEntry(alarm);
+								callMathAlarmScheduleService();
+							}
+							finish();
+						}
+					});
+					dialog.setNegativeButton("Cancel", new OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+					dialog.show();
+										
 				case MotionEvent.ACTION_MOVE:
 				case MotionEvent.ACTION_CANCEL:
-					saveButton.setBackgroundColor(getResources().getColor(
-							android.R.color.transparent));								
+					deleteButton.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 					break;
 				}
 				return true;
 			}
 		});
-		
+
 		okButton = (TextView) findViewById(R.id.textView_OK);
 		okButton.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -95,8 +112,7 @@ public class AlarmPreferencesActivity extends ListActivity {
 
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					okButton.setBackgroundColor(getResources().getColor(
-							R.color.holo_blue_light));
+					okButton.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
 					break;
 				case MotionEvent.ACTION_UP:
 					v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
@@ -107,20 +123,17 @@ public class AlarmPreferencesActivity extends ListActivity {
 						Database.update(getMathAlarm());
 					}
 					callMathAlarmScheduleService();
-					Toast.makeText(AlarmPreferencesActivity.this,
-							getMathAlarm().getTimeUntilNextAlarmMessage(),
-							Toast.LENGTH_LONG).show();
+					Toast.makeText(AlarmPreferencesActivity.this, getMathAlarm().getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
 					finish();
 				case MotionEvent.ACTION_MOVE:
 				case MotionEvent.ACTION_CANCEL:
-					okButton.setBackgroundColor(getResources().getColor(
-							android.R.color.transparent));
+					okButton.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 					break;
 				}
 				return true;
 			}
 		});
-		
+
 		cancelButton = (TextView) findViewById(R.id.textView_cancel);
 		cancelButton.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -128,22 +141,20 @@ public class AlarmPreferencesActivity extends ListActivity {
 
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					cancelButton.setBackgroundColor(getResources().getColor(
-							R.color.holo_blue_light));
+					cancelButton.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
 					break;
 				case MotionEvent.ACTION_UP:
 					v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 					finish();
 				case MotionEvent.ACTION_MOVE:
 				case MotionEvent.ACTION_CANCEL:
-					cancelButton.setBackgroundColor(getResources().getColor(
-							android.R.color.transparent));
+					cancelButton.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 					break;
 				}
 				return true;
 			}
 		});
-		
+
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null && bundle.containsKey("alarm")) {
 			setMathAlarm((Alarm) bundle.getSerializable("alarm"));
@@ -152,20 +163,18 @@ public class AlarmPreferencesActivity extends ListActivity {
 	}
 
 	private void callMathAlarmScheduleService() {
-		Intent mathAlarmServiceIntent = new Intent(this,
-				AlarmServiceBroadcastReciever.class);
+		Intent mathAlarmServiceIntent = new Intent(this, AlarmServiceBroadcastReciever.class);
 		sendBroadcast(mathAlarmServiceIntent, null);
 	}
 
-	
 	private CountDownTimer alarmToneTimer;
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
 		final AlarmPreferenceListAdapter alarmPreferenceListAdapter = (AlarmPreferenceListAdapter) getListAdapter();
-		final AlarmPreference alarmPreference = (AlarmPreference) alarmPreferenceListAdapter
-				.getItem(position);
+		final AlarmPreference alarmPreference = (AlarmPreference) alarmPreferenceListAdapter.getItem(position);
 
 		AlertDialog.Builder alert;
 		v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
@@ -197,29 +206,23 @@ public class AlarmPreferencesActivity extends ListActivity {
 
 			// Set an EditText view to get user input
 			final EditText input = new EditText(this);
-			
+
 			input.setText(alarmPreference.getValue().toString());
 
 			alert.setView(input);
-			alert.setPositiveButton("Ok",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
 
-							alarmPreference.setValue(input.getText()
-									.toString());
+					alarmPreference.setValue(input.getText().toString());
 
-							if (alarmPreference.getKey() == Key.ALARM_NAME) {
-								alarm.setAlarmName(alarmPreference
-										.getValue().toString());
-							}
+					if (alarmPreference.getKey() == Key.ALARM_NAME) {
+						alarm.setAlarmName(alarmPreference.getValue().toString());
+					}
 
-							alarmPreferenceListAdapter
-									.setMathAlarm(getMathAlarm());
-							alarmPreferenceListAdapter
-									.notifyDataSetChanged();
-						}
-					});
+					alarmPreferenceListAdapter.setMathAlarm(getMathAlarm());
+					alarmPreferenceListAdapter.notifyDataSetChanged();
+				}
+			});
 			alert.show();
 			break;
 		case LIST:
@@ -228,8 +231,7 @@ public class AlarmPreferencesActivity extends ListActivity {
 			alert.setTitle(alarmPreference.getTitle());
 			// alert.setMessage(message);
 
-			CharSequence[] items = new CharSequence[alarmPreference
-					.getOptions().length];
+			CharSequence[] items = new CharSequence[alarmPreference.getOptions().length];
 			for (int i = 0; i < items.length; i++)
 				items[i] = alarmPreference.getOptions()[i];
 
@@ -243,22 +245,19 @@ public class AlarmPreferencesActivity extends ListActivity {
 						alarm.setDifficulty(d);
 						break;
 					case ALARM_TONE:
-						alarm.setAlarmTonePath(alarmPreferenceListAdapter
-										.getAlarmTonePaths()[which]);
+						alarm.setAlarmTonePath(alarmPreferenceListAdapter.getAlarmTonePaths()[which]);
 						if (alarm.getAlarmTonePath() != null) {
-							if (mediaPlayer == null){								
+							if (mediaPlayer == null) {
 								mediaPlayer = new MediaPlayer();
-							}else{
-							if(mediaPlayer.isPlaying())
-								mediaPlayer.stop();
-							mediaPlayer.reset();
+							} else {
+								if (mediaPlayer.isPlaying())
+									mediaPlayer.stop();
+								mediaPlayer.reset();
 							}
 							try {
-//								mediaPlayer.setVolume(1.0f, 1.0f);
+								// mediaPlayer.setVolume(1.0f, 1.0f);
 								mediaPlayer.setVolume(0.2f, 0.2f);
-								mediaPlayer.setDataSource(
-										AlarmPreferencesActivity.this,
-										Uri.parse(alarm.getAlarmTonePath()));
+								mediaPlayer.setDataSource(AlarmPreferencesActivity.this, Uri.parse(alarm.getAlarmTonePath()));
 								mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
 								mediaPlayer.setLooping(false);
 								mediaPlayer.prepare();
@@ -266,7 +265,7 @@ public class AlarmPreferencesActivity extends ListActivity {
 
 								// Force the mediaPlayer to stop after 3
 								// seconds...
-								if(alarmToneTimer != null)
+								if (alarmToneTimer != null)
 									alarmToneTimer.cancel();
 								alarmToneTimer = new CountDownTimer(3000, 3000) {
 									@Override
@@ -278,7 +277,7 @@ public class AlarmPreferencesActivity extends ListActivity {
 									public void onFinish() {
 										try {
 											if (mediaPlayer.isPlaying())
-												mediaPlayer.stop();											
+												mediaPlayer.stop();
 										} catch (Exception e) {
 
 										}
@@ -288,12 +287,14 @@ public class AlarmPreferencesActivity extends ListActivity {
 							} catch (Exception e) {
 								try {
 									if (mediaPlayer.isPlaying())
-									mediaPlayer.stop();
+										mediaPlayer.stop();
 								} catch (Exception e2) {
 
 								}
 							}
 						}
+						break;
+					default:
 						break;
 					}
 					alarmPreferenceListAdapter.setMathAlarm(getMathAlarm());
@@ -310,8 +311,7 @@ public class AlarmPreferencesActivity extends ListActivity {
 			alert.setTitle(alarmPreference.getTitle());
 			// alert.setMessage(message);
 
-			CharSequence[] multiListItems = new CharSequence[alarmPreference
-					.getOptions().length];
+			CharSequence[] multiListItems = new CharSequence[alarmPreference.getOptions().length];
 			for (int i = 0; i < multiListItems.length; i++)
 				multiListItems[i] = alarmPreference.getOptions()[i];
 
@@ -319,23 +319,27 @@ public class AlarmPreferencesActivity extends ListActivity {
 			for (Alarm.Day day : getMathAlarm().getDays()) {
 				checkedItems[day.ordinal()] = true;
 			}
-			alert.setMultiChoiceItems(multiListItems, checkedItems,
-					new OnMultiChoiceClickListener() {
+			alert.setMultiChoiceItems(multiListItems, checkedItems, new OnMultiChoiceClickListener() {
 
-						@Override
-						public void onClick(DialogInterface dialog, int which,
-								boolean isChecked) {
+				@Override
+				public void onClick(final DialogInterface dialog, int which, boolean isChecked) {
 
-							Alarm.Day thisDay = Alarm.Day.values()[which];
+					Alarm.Day thisDay = Alarm.Day.values()[which];
 
-							if (isChecked) {
-								alarm.addDay(thisDay);
-							} else {
-								alarm.removeDay(thisDay);
-							}
-
+					if (isChecked) {
+						alarm.addDay(thisDay);
+					} else {
+						//Only remove the day if there are more than 1 selected
+						if(alarm.getDays().length > 1){
+							alarm.removeDay(thisDay);
+						}else{
+							//If the last day was unchecked, re-check it
+							((AlertDialog) dialog).getListView().setItemChecked(which, true);
 						}
-					});
+					}
+
+				}
+			});
 			alert.setOnCancelListener(new OnCancelListener() {
 				@Override
 				public void onCancel(DialogInterface dialog) {
@@ -347,24 +351,19 @@ public class AlarmPreferencesActivity extends ListActivity {
 			alert.show();
 			break;
 		case TIME:
-			TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-					new OnTimeSetListener() {
+			TimePickerDialog timePickerDialog = new TimePickerDialog(this, new OnTimeSetListener() {
 
-						@Override
-						public void onTimeSet(TimePicker timePicker, int hours,
-								int minutes) {
-							Calendar newAlarmTime = Calendar.getInstance();
-							newAlarmTime.set(Calendar.HOUR_OF_DAY, hours);
-							newAlarmTime.set(Calendar.MINUTE, minutes);
-							newAlarmTime.set(Calendar.SECOND, 0);
-							alarm.setAlarmTime(newAlarmTime);
-							alarmPreferenceListAdapter
-									.setMathAlarm(getMathAlarm());
-							alarmPreferenceListAdapter
-									.notifyDataSetChanged();
-						}
-					}, alarm.getAlarmTime().get(Calendar.HOUR_OF_DAY),
-					alarm.getAlarmTime().get(Calendar.MINUTE), true);
+				@Override
+				public void onTimeSet(TimePicker timePicker, int hours, int minutes) {
+					Calendar newAlarmTime = Calendar.getInstance();
+					newAlarmTime.set(Calendar.HOUR_OF_DAY, hours);
+					newAlarmTime.set(Calendar.MINUTE, minutes);
+					newAlarmTime.set(Calendar.SECOND, 0);
+					alarm.setAlarmTime(newAlarmTime);
+					alarmPreferenceListAdapter.setMathAlarm(getMathAlarm());
+					alarmPreferenceListAdapter.notifyDataSetChanged();
+				}
+			}, alarm.getAlarmTime().get(Calendar.HOUR_OF_DAY), alarm.getAlarmTime().get(Calendar.MINUTE), true);
 			timePickerDialog.setTitle(alarmPreference.getTitle());
 			timePickerDialog.show();
 		default:
@@ -401,8 +400,7 @@ public class AlarmPreferencesActivity extends ListActivity {
 			if (getMathAlarm() == null)
 				setMathAlarm(new Alarm());
 
-			setListAdapter(new AlarmPreferenceListAdapter(this,
-					getMathAlarm()));
+			setListAdapter(new AlarmPreferenceListAdapter(this, getMathAlarm()));
 		} else {
 			Object[] bundle = (Object[]) data;
 			setMathAlarm((Alarm) bundle[0]);
@@ -419,7 +417,6 @@ public class AlarmPreferencesActivity extends ListActivity {
 		this.alarm = alarm;
 	}
 
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -431,14 +428,12 @@ public class AlarmPreferencesActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_item_rate:
-			Uri uri = Uri.parse("market://details?id="
-					+ getPackageName());
+			Uri uri = Uri.parse("market://details?id=" + getPackageName());
 			Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
 			try {
 				startActivity(goToMarket);
 			} catch (ActivityNotFoundException e) {
-				Toast.makeText(this, "Couldn't launch the market",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Couldn't launch the market", Toast.LENGTH_LONG).show();
 			}
 			break;
 		case R.id.menu_item_website:
@@ -454,23 +449,15 @@ public class AlarmPreferencesActivity extends ListActivity {
 			String emailAddress = "bugs@neilson.co.za";
 			String subject = R.string.app_name + " Bug Report";
 			String body = "Debug:";
-			body += "\n OS Version: " + System.getProperty("os.version") + "("
-					+ android.os.Build.VERSION.INCREMENTAL + ")";
+			body += "\n OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")";
 			body += "\n OS API Level: " + android.os.Build.VERSION.SDK_INT;
 			body += "\n Device: " + android.os.Build.DEVICE;
-			body += "\n Model (and Product): " + android.os.Build.MODEL + " ("
-					+ android.os.Build.PRODUCT + ")";
-			body += "\n Screen Width: "
-					+ getWindow().getWindowManager().getDefaultDisplay()
-							.getWidth();
-			body += "\n Screen Height: "
-					+ getWindow().getWindowManager().getDefaultDisplay()
-							.getHeight();
-			body += "\n Hardware Keyboard Present: "
-					+ (getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS);
+			body += "\n Model (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")";
+			body += "\n Screen Width: " + getWindow().getWindowManager().getDefaultDisplay().getWidth();
+			body += "\n Screen Height: " + getWindow().getWindowManager().getDefaultDisplay().getHeight();
+			body += "\n Hardware Keyboard Present: " + (getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS);
 
-			uriText = "mailto:" + emailAddress + "?subject=" + subject
-					+ "&body=" + body;
+			uriText = "mailto:" + emailAddress + "?subject=" + subject + "&body=" + body;
 
 			uriText = uriText.replace(" ", "%20");
 			Uri emalUri = Uri.parse(uriText);

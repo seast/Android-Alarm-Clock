@@ -35,8 +35,8 @@ public final class R {
         public static final int Button_minus=0x7f080017;
         public static final int TableRow3=0x7f08000c;
         public static final int TableRow4=0x7f080010;
+        public static final int button_delete=0x7f08001e;
         public static final int button_new=0x7f080002;
-        public static final int button_save=0x7f08001e;
         public static final int checkBox_alarm_active=0x7f08001a;
         public static final int menu_item_rate=0x7f080023;
         public static final int menu_item_report=0x7f080025;
@@ -84,8 +84,8 @@ public final class R {
         /**  Math Alarm Activity 
          */
         public static final int app_name=0x7f050000;
+        public static final int button_delete=0x7f050014;
         public static final int button_new=0x7f050003;
-        public static final int button_save=0x7f050014;
         public static final int cancel=0x7f050016;
         public static final int clear_button_text=0x7f050012;
         public static final int decimal_button_text=0x7f050011;

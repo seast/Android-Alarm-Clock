@@ -23,14 +23,14 @@
 	            android:textColor="@android:color/primary_text_dark" />
 	
 	        <ImageButton
-	            android:id="@+id/button_save"
+	            android:id="@+id/button_delete"
 	            android:layout_width="0dp"
 	            android:layout_height="50dp"
 	            android:layout_weight="1"
 	            android:background="@android:color/black"
-	            android:contentDescription="@string/button_save"
+	            android:contentDescription="@string/button_delete"
 	
-	            android:src="@android:drawable/ic_menu_save" />
+	            android:src="@android:drawable/ic_menu_delete" />
 
     </LinearLayout>
 
