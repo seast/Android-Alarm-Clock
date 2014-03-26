@@ -250,7 +250,7 @@ public class AlarmAlertActivity extends Activity implements OnClickListener {
 				&& !isAnswerCorrect()) {
 			answerView.setTextColor(Color.RED);
 		} else {
-			answerView.setTextColor(Color.WHITE);
+			answerView.setTextColor(Color.BLACK);
 		}
 	}
 

@@ -22,8 +22,8 @@ public class AlarmListAdapter extends BaseAdapter {
 
 	public AlarmListAdapter(AlarmActivity alarmActivity) {
 		this.alarmActivity = alarmActivity;
-		Database.init(alarmActivity);
-		alarms = Database.getAll();
+//		Database.init(alarmActivity);
+//		alarms = Database.getAll();
 	}
 
 	@Override

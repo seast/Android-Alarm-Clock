@@ -1,5 +1,6 @@
 package za.co.neilson.alarm.preferences;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckedTextView;
 import android.widget.TextView;
 
-public class AlarmPreferenceListAdapter extends BaseAdapter {
+public class AlarmPreferenceListAdapter extends BaseAdapter implements Serializable {
 
 	private Context context;
 	private Alarm alarm;
