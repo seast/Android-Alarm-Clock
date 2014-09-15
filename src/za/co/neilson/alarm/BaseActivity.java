@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
@@ -31,9 +31,9 @@ public abstract class BaseActivity  extends ActionBarActivity implements android
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		try {
-	        ViewConfiguration config = ViewConfiguration.get(this);	        
+	        ViewConfiguration config = ViewConfiguration.get(this);
 	        Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
 	        if(menuKeyField != null) {
 	            menuKeyField.setAccessible(true);
@@ -43,9 +43,9 @@ public abstract class BaseActivity  extends ActionBarActivity implements android
 	        // Ignore
 	    }
 	}
-	
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {		
+	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu items for use in the action bar
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.menu, menu);
@@ -82,7 +82,7 @@ public abstract class BaseActivity  extends ActionBarActivity implements android
 			}
 			break;
 		case R.id.menu_item_report:
-			
+
 			url = "https://github.com/SheldonNeilson/Android-Alarm-Clock/issues";
 			intent = new Intent(Intent.ACTION_VIEW);
 			intent.setData(Uri.parse(url));
@@ -91,7 +91,7 @@ public abstract class BaseActivity  extends ActionBarActivity implements android
 			} catch (ActivityNotFoundException e) {
 				Toast.makeText(this, "Couldn't launch the bug reporting website", Toast.LENGTH_LONG).show();
 			}
-			
+
 			/*
 			Intent send = new Intent(Intent.ACTION_SENDTO);
 			String uriText;

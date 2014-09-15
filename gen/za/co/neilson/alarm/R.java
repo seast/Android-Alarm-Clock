@@ -1080,21 +1080,6 @@ containing a value of this type.
         public static final int ic_launcher=0x7f02005c;
     }
     public static final class id {
-        public static final int Button0=0x7f05004e;
-        public static final int Button1=0x7f050041;
-        public static final int Button2=0x7f050042;
-        public static final int Button3=0x7f050043;
-        public static final int Button4=0x7f050045;
-        public static final int Button5=0x7f050046;
-        public static final int Button6=0x7f050047;
-        public static final int Button7=0x7f050049;
-        public static final int Button8=0x7f05004a;
-        public static final int Button9=0x7f05004b;
-        public static final int Button_clear=0x7f050051;
-        public static final int Button_decimal=0x7f05004d;
-        public static final int Button_minus=0x7f05004f;
-        public static final int TableRow3=0x7f050044;
-        public static final int TableRow4=0x7f050048;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1107,9 +1092,10 @@ containing a value of this type.
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
         public static final int activity_chooser_view_content=0x7f050025;
+        public static final int alert=0x7f05003c;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
-        public static final int checkBox_alarm_active=0x7f050052;
+        public static final int checkBox_alarm_active=0x7f05003d;
         public static final int checkbox=0x7f05002d;
         public static final int collapseActionView=0x7f05000d;
         public static final int default_activity_button=0x7f050028;
@@ -1127,12 +1113,12 @@ containing a value of this type.
         public static final int image=0x7f050027;
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f050029;
-        public static final int menu_item_delete=0x7f050058;
-        public static final int menu_item_new=0x7f050056;
-        public static final int menu_item_rate=0x7f050059;
-        public static final int menu_item_report=0x7f05005b;
-        public static final int menu_item_save=0x7f050057;
-        public static final int menu_item_website=0x7f05005a;
+        public static final int menu_item_delete=0x7f050043;
+        public static final int menu_item_new=0x7f050041;
+        public static final int menu_item_rate=0x7f050044;
+        public static final int menu_item_report=0x7f050046;
+        public static final int menu_item_save=0x7f050042;
+        public static final int menu_item_website=0x7f050045;
         public static final int middle=0x7f050012;
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
@@ -1157,20 +1143,13 @@ containing a value of this type.
         public static final int split_action_bar=0x7f05001e;
         public static final int submit_area=0x7f050039;
         public static final int tabMode=0x7f050002;
-        public static final int tableRow0=0x7f05003c;
-        public static final int tableRow1=0x7f05003e;
-        public static final int tableRow2=0x7f050040;
-        public static final int tableRow5=0x7f05004c;
-        public static final int tableRow6=0x7f050050;
-        public static final int textView1=0x7f05003d;
-        public static final int textView2=0x7f05003f;
-        public static final int textView_alarm_days=0x7f050055;
-        public static final int textView_alarm_time=0x7f050054;
+        public static final int textView_alarm_days=0x7f050040;
+        public static final int textView_alarm_time=0x7f05003f;
         public static final int title=0x7f05002b;
         public static final int top_action_bar=0x7f050020;
         public static final int up=0x7f050021;
         public static final int useLogo=0x7f050003;
-        public static final int view1=0x7f050053;
+        public static final int view1=0x7f05003e;
         public static final int withText=0x7f05000c;
     }
     public static final class integer {
@@ -2657,7 +2636,7 @@ containing a value of this type.
          */
         public static final int[] MenuView = {
             0x010100ae, 0x0101012c, 0x0101012d, 0x0101012e,
-            0x0101012f, 0x01010130, 0x01010131, 0x0101041a
+            0x0101012f, 0x01010130, 0x01010131, 0x01010438
         };
         /**
           <p>
