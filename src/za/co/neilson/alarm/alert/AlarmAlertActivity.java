@@ -16,7 +16,6 @@ import za.co.neilson.alarm.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -26,32 +25,23 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.HapticFeedbackConstants;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-public class AlarmAlertActivity extends Activity implements OnClickListener {
+public class AlarmAlertActivity extends Activity {
 
 	private Alarm alarm;
 	private MediaPlayer mediaPlayer;
 
-	private StringBuilder answerBuilder = new StringBuilder();
-
-	private MathProblem mathProblem;
 	private Vibrator vibrator;
 
 	private boolean alarmActive;
-
-	private TextView answerView;
-	private String answerString;
 	private WebView mWebView;  
+	private JsHandler _jsHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +64,8 @@ public class AlarmAlertActivity extends Activity implements OnClickListener {
 	    layout.addView(mWebView);                                                                    
 
 		mWebView.setWebViewClient(new MyBrowser());  
-	    
+		_jsHandler = new JsHandler(this, mWebView);		
+		
 		open();
 		Bundle bundle = this.getIntent().getExtras();
 		alarm = (Alarm) bundle.getSerializable("alarm");
@@ -191,101 +182,47 @@ public class AlarmAlertActivity extends Activity implements OnClickListener {
 		}
 		super.onDestroy();
 	}
-	
-	
-	@Override
-	public void onClick(View v) {
-		if (!alarmActive)
-			return;
-		String button = (String) v.getTag();
-		v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-		if (button.equalsIgnoreCase("clear")) {
-			if (answerBuilder.length() > 0) {
-				answerBuilder.setLength(answerBuilder.length() - 1);
-				answerView.setText(answerBuilder.toString());
-			}
-		} else if (button.equalsIgnoreCase(".")) {
-			if (!answerBuilder.toString().contains(button)) {
-				if (answerBuilder.length() == 0)
-					answerBuilder.append(0);
-				answerBuilder.append(button);
-				answerView.setText(answerBuilder.toString());
-			}
-		} else if (button.equalsIgnoreCase("-")) {
-			if (answerBuilder.length() == 0) {
-				answerBuilder.append(button);
-				answerView.setText(answerBuilder.toString());
-			}
-		} else {
-			answerBuilder.append(button);
-			answerView.setText(answerBuilder.toString());
-			if (isAnswerCorrect()) {
-				alarmActive = false;
-				if (vibrator != null)
-					vibrator.cancel();
-				try {
-					mediaPlayer.stop();
-				} catch (IllegalStateException ise) {
 
-				}
-				try {
-					mediaPlayer.release();
-				} catch (Exception e) {
-
-				}
-				this.finish();
-			}
-		}
-		if (answerView.getText().length() >= answerString.length()
-				&& !isAnswerCorrect()) {
-			answerView.setTextColor(Color.RED);
-		} else {
-			answerView.setTextColor(Color.BLACK);
-		}
-	}
-
-	public boolean isAnswerCorrect() {
-		boolean correct = false;
+	public void cancelAlert() {
+		alarmActive = false;
+		if (vibrator != null)
+			vibrator.cancel();
 		try {
-			correct = mathProblem.getAnswer() == Float.parseFloat(answerBuilder
-					.toString());
-		} catch (NumberFormatException e) {
-			return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+			mediaPlayer.stop();
+		} catch (IllegalStateException ise) {
+
 		}
-		return correct;
+		try {
+			mediaPlayer.release();
+		} catch (Exception e) {
+
+		}
+		this.finish();
 	}
 	
 	private class MyBrowser extends WebViewClient {                                                 
 
 		@Override                                                                                  
-		public WebResourceResponse shouldInterceptRequest (final WebView view, String url) {       
-			System.out.println("---- " + url);                                                       
+		public WebResourceResponse shouldInterceptRequest (final WebView view, String url) {                                                          
 			return super.shouldInterceptRequest(view, url);                                          
 		}                                                                                          
 
 		@Override                                                                                  
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {                        
-			System.out.println("----1 " + url);                                                      
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {                                                                           
 			if (Uri.parse(url).getHost().equals("www.google.com")) {                                                       
-				// This is my web site, so do not override; let my WebView load the page           
+				// This is reCAPTCHA web site, so do not override; let my WebView load the page           
 				return false;                                                                      
-			}                                                                                      
-			// Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-			//Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));                      
-			//startActivity(intent);                                                               
+			}                                                                                                                                                  
 			return true;                                                                           
 		}                                                                                          
 	} 
 	
 	@SuppressLint("SetJavaScriptEnabled") public void open(){                                                                                            
-		String url = "https://www.google.com/recaptcha/api2/demo";                                   
+		String url = "http://haidong1.mtv.corp.google.com:8888/recaptcha/api2/mframe?k=6LehsLkSAAAAACYLmwf73O_1HrUnKy565VVmCDZR&callback=JsHandler";                                   
 		mWebView.getSettings().setLoadsImagesAutomatically(true);                                    
 		mWebView.getSettings().setJavaScriptEnabled(true);                                           
 		mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);                                  
-		mWebView.loadUrl(url);                                                                       
-
-	} 
+		mWebView.addJavascriptInterface(_jsHandler, "JsHandler");
+		mWebView.loadUrl(url);
+	}
 }
